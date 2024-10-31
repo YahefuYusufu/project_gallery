@@ -8,6 +8,7 @@ interface ProjectModalProps {
   isOpen: boolean;
   project: Project | null;
   onClose: () => void;
+  isMobile: boolean;
 }
 
 export const ProjectModal: React.FC<ProjectModalProps> = ({
