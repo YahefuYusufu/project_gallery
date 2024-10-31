@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectCard } from './ProjectCard';
 import { ProjectModal } from './ProjectModal';
 import { Project } from '../../types/project';
@@ -37,16 +37,67 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects }) => {
     setTimeout(() => setSelectedProject(null), 200); // Clear selection after animation
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const categoryVariants = {
+    hover: {
+      scale: 1.05,
+      transition: {
+        type: 'spring',
+        stiffness: 400,
+        damping: 10,
+      },
+    },
+    tap: {
+      scale: 0.95,
+      transition: {
+        type: 'spring',
+        stiffness: 400,
+        damping: 10,
+      },
+    },
+  };
+
+  const gridVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
   return (
-    <section className="py-16">
+    <motion.section
+      className="py-16"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Categories */}
       <div className="max-w-6xl mx-auto px-6 mb-12">
-        <div className="flex flex-wrap gap-4 justify-center">
+        <motion.div
+          className="flex flex-wrap gap-4 justify-center"
+          variants={containerVariants}
+        >
           {categories.map(({ id, label, icon: Icon }) => (
             <motion.button
               key={id}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              variants={categoryVariants}
+              whileHover="hover"
+              whileTap="tap"
               onClick={() => setSelectedCategory(id)}
               className={`flex items-center gap-2 px-6 py-3 rounded-full transition-colors
                 ${
@@ -59,21 +110,40 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects }) => {
               {label}
             </motion.button>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* Projects Grid */}
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map(project => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onSelect={handleProjectClick}
-            />
-          ))}
-        </div>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedCategory}
+          className="max-w-6xl mx-auto px-6"
+          variants={gridVariants}
+          initial="hidden"
+          animate="visible"
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            layout
+          >
+            {filteredProjects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { delay: index * 0.1 },
+                }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <ProjectCard project={project} onSelect={handleProjectClick} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Modal */}
       <ProjectModal
@@ -81,6 +151,6 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects }) => {
         project={selectedProject}
         onClose={handleCloseModal}
       />
-    </section>
+    </motion.section>
   );
 };

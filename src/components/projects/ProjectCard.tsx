@@ -11,25 +11,69 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   project,
   onSelect,
 }) => {
+  const cardVariants = {
+    hover: {
+      y: -8,
+      transition: {
+        type: 'spring',
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+  };
+
+  const imageVariants = {
+    hover: {
+      scale: 1.05,
+      transition: {
+        type: 'spring',
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+  };
+
+  const contentVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.3,
+      },
+    },
+  };
+
   return (
     <motion.div
       onClick={() => onSelect(project)}
-      whileHover={{ y: -8 }}
+      variants={cardVariants}
+      whileHover="hover"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2 }}
-      className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg cursor-pointer"
+      transition={{
+        duration: 0.3,
+        type: 'spring',
+        stiffness: 300,
+        damping: 20,
+      }}
+      className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg cursor-pointer
+        hover:shadow-xl transition-shadow duration-300"
     >
       <div className="overflow-hidden">
         <motion.img
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.2 }}
+          variants={imageVariants}
           src={project.imageUrl}
           alt={`${project.title} thumbnail`}
-          className="w-full h-48 object-cover"
+          className="w-full h-48 object-cover transform"
         />
       </div>
-      <div className="p-6">
+      <motion.div
+        className="p-6"
+        variants={contentVariants}
+        initial="initial"
+        animate="animate"
+      >
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
           {project.title}
         </h3>
@@ -38,15 +82,17 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         </p>
         <div className="flex flex-wrap gap-2">
           {project.technologies.map((tech, index) => (
-            <span
+            <motion.span
               key={index}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               className={`px-3 py-1 ${tech.colorClass} rounded-full text-sm`}
             >
               {tech.name}
-            </span>
+            </motion.span>
           ))}
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 };
