@@ -25,7 +25,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects }) => {
     // Simulate initial data loading
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1000); // 1 second loading time
+    }, 1500); // 1 second loading time
 
     return () => clearTimeout(timer);
   }, []); // Only run once on mount
@@ -39,7 +39,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects }) => {
     setTimeout(() => {
       setIsFiltering(false);
       if (isMobile) setShowCategories(false);
-    }, 500); // 0.5 second filtering time
+    }, 1500); // 0.5 second filtering time
   };
 
   // Detect mobile device

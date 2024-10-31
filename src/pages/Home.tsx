@@ -1,4 +1,3 @@
-import React from 'react';
 import { ProjectList } from '../components/projects/ProjectList';
 import { projects } from '../data/projects';
 
